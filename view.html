@@ -1,8 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
+    <head>
+        <style>
+            html, body {
+                margin: 0;
+                padding: 0;
+                height: 100%;
+                width: 100%;
+                overflow: hidden; /* prevent scrollbars */
+            }
+        </style>
+    </head>
     <body onload="drawMap()">
         <script src="https://d3js.org/d3.v7.min.js"></script>
         <script src="https://unpkg.com/topojson-client@3"></script>
+        <script src="model.js"></script>
         <script src="controller.js"></script>
     </body>
 </html>
