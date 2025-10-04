@@ -5,10 +5,8 @@ class User {
         this.id = id;
 
     }
-    
-    interact() {
+
+    generateID() {
 
     }
 }
-
-users.interact();
