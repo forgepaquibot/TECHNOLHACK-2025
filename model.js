@@ -1,15 +1,15 @@
 // =====================
 // model.js
-// Defines the User class and all user-related data fields
+// User & Institution classes
 // =====================
 
 export class User {
-  // --- Static dropdown options (presets) ---
+  // Presets
   static GENDER_OPTIONS = {
     "Male": "He/Him",
     "Female": "She/Her",
     "Non-Binary": "They/Them",
-    "Other": null, // will require custom pronouns
+    "Other": null, // requires custom pronouns
   };
 
   static CAUSE_OPTIONS = [
@@ -25,10 +25,14 @@ export class User {
     "Disaster relief",
     "Veterans & military families",
     "Career development",
-    "Peoples with disabilities/special needs"
+    "Peoples with disabilities/special needs",
   ];
 
-  // --- Constructor ---
+  /**
+   * @param {string} name
+   * @param {string} password
+   * @param {object} options
+   */
   constructor(
     name,
     password,
@@ -37,38 +41,36 @@ export class User {
       pronouns = "Not shared",
       fieldOfStudy = "Not shared",
       interests = [],
-      institution = "No institution selected",
       linkedIn = "No LinkedIn provided",
-      causes = []
+      causes = [],
+      institution = "No institution selected",
     } = {}
   ) {
     this.name = name;
     this.password = password;
-    this.id = User.generateId(name);
 
-    // Basic identity
     this.gender = gender;
     this.pronouns = pronouns;
     this.fieldOfStudy = fieldOfStudy;
-    this.interests = interests.length > 0 ? interests : ["Not shared"];
-
-    // Bio-related fields
-    this.institution = institution;
+    this.interests = interests.length ? interests : ["Not shared"];
     this.linkedIn = linkedIn;
-    this.causes = causes.length > 0 ? causes : ["No causes selected"];
+    this.causes = causes.length ? causes : ["No causes selected"];
+    this.institution = institution;
+
+    this.id = null; // set via generateID()
   }
 
-  // --- Utility: simple hash for ID ---
-  static generateId(username) {
+  /** Deterministic 32-bit hash of username → numeric ID */
+  generateID() {
     let hash = 0;
-    for (let i = 0; i < username.length; i++) {
-      hash = (hash << 5) - hash + username.charCodeAt(i);
+    for (let i = 0; i < this.name.length; i++) {
+      hash = (hash << 5) - hash + this.name.charCodeAt(i);
       hash |= 0;
     }
-    return Math.abs(hash);
+    this.id = Math.abs(hash);
+    return this.id;
   }
 
-  // --- Gender + pronouns handling ---
   setGender(gender, customPronouns) {
     if (!gender) {
       this.gender = "Not shared";
@@ -83,88 +85,63 @@ export class User {
     }
   }
 
-  // --- Field of study ---
   setFieldOfStudy(field) {
     this.fieldOfStudy = field || "Not shared";
   }
 
-  // --- Interests ---
   addInterest(interest) {
     if (!interest) return;
-    if (this.interests.includes("Not shared")) {
-      this.interests = [interest];
-    } else {
-      this.interests.push(interest);
-    }
+    if (this.interests.includes("Not shared")) this.interests = [interest];
+    else this.interests.push(interest);
   }
 
-  // --- Institution ---
-  setInstitution(institution) {
-    this.institution = institution || "No institution selected";
-  }
-
-  // --- LinkedIn ---
   setLinkedIn(link) {
     this.linkedIn = link || "No LinkedIn provided";
   }
 
-  // --- Causes ---
   setCauses(causesArray) {
-    if (Array.isArray(causesArray) && causesArray.length > 0) {
-      this.causes = causesArray;
-    } else {
-      this.causes = ["No causes selected"];
-    }
+    if (Array.isArray(causesArray) && causesArray.length) this.causes = causesArray;
+    else this.causes = ["No causes selected"];
+  }
+
+  setInstitution(name) {
+    this.institution = name || "No institution selected";
   }
 }
 
 // =====================
-// Industry Class
+// Institution (special account)
 // =====================
-
-// =====================
-// Institution Class
-// =====================
-
 export class Institution {
   /**
-   * Represents an institution (special account).
-   * Institutions are separate from users and require an API Token to create.
-   *
-   * Fields:
-   * - name: Institution name (string)
-   * - apiToken: must equal "ABC123" (simulated authentication)
-   * - password: institution account password (string)
-   * - id: auto-generated unique ID (hash of name)
-   * - associatedUsers: list of user IDs linked to this institution
+   * Institutions require valid API token: "ABC123"
+   * @param {string} name
+   * @param {string} apiToken
+   * @param {string} password
    */
   constructor(name, apiToken, password) {
-    if (apiToken !== "ABC123") {
-      throw new Error("Invalid API Token. Must be 'ABC123'.");
-    }
-
+    if (apiToken !== "ABC123") throw new Error("Invalid API Token. Must be 'ABC123'.");
     this.name = name;
     this.apiToken = apiToken;
     this.password = password;
-    this.id = Institution.generateId(name);
 
+    this.id = null; // set via generateID()
     this.associatedUsers = [];
+    this.generateID();
   }
 
-  // --- Utility: simple hash for ID ---
-  static generateId(instName) {
+  /** Deterministic 32-bit hash of name → numeric ID */
+  generateID() {
     let hash = 0;
-    for (let i = 0; i < instName.length; i++) {
-      hash = (hash << 5) - hash + instName.charCodeAt(i);
+    for (let i = 0; i < this.name.length; i++) {
+      hash = (hash << 5) - hash + this.name.charCodeAt(i);
       hash |= 0;
     }
-    return Math.abs(hash);
+    this.id = Math.abs(hash);
+    return this.id;
   }
 
-  // --- Associate a user with this institution ---
   addUser(user) {
-    if (!this.associatedUsers.includes(user.id)) {
-      this.associatedUsers.push(user.id);
-    }
+    if (!this.associatedUsers.includes(user.id)) this.associatedUsers.push(user.id);
   }
 }

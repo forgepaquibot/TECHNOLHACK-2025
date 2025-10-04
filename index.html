@@ -1,37 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>User & Institution Management</title>
-  <style>
-    .hidden { display: none; }
-    .container { display: flex; gap: 20px; margin-top: 20px; }
-    .column { flex: 1; border: 1px solid #aaa; padding: 10px; }
-    .user-card, .institution-card { border: 1px solid #ccc; padding: 10px; margin: 10px 0; }
-    .profile, .edit { display: none; margin-top: 10px; border-top: 1px dashed #aaa; padding-top: 8px; }
-    .causes-dropdown { border: 1px solid #aaa; padding: 5px; max-height: 150px; overflow-y: auto; }
-  </style>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h2>Create Account</h2>
-  <button id="showUserForm">Create User Account</button>
-  <button id="showInstitutionForm">Create Institution Account</button>
+  <div id="accountCard" class="card">
+    <h2 id="cardTitle">Select Account Type</h2>
 
-  <!-- User Form -->
-  <div id="userForm" class="hidden">
-    <h3>Create User</h3>
-    <input type="text" id="username" placeholder="Username">
-    <input type="password" id="password" placeholder="Password">
-    <button id="createUserBtn">Create User</button>
-  </div>
+    <!-- Selection buttons -->
+    <div id="selectionBtns" class="btn-row fade show">
+      <button id="showUserForm">Create User</button>
+      <button id="showInstitutionForm">Create Institution</button>
+    </div>
 
-  <!-- Institution Form -->
-  <div id="institutionForm" class="hidden">
-    <h3>Create Institution</h3>
-    <input type="text" id="institutionName" placeholder="Institution Name">
-    <input type="text" id="institutionApi" placeholder="API Token">
-    <input type="password" id="institutionPassword" placeholder="Password">
-    <button id="createInstitutionBtn">Create Institution</button>
+    <!-- User Form -->
+    <div id="userForm" class="fade">
+      <input type="text" id="username" placeholder="Username" />
+      <input type="password" id="password" placeholder="Password" />
+      <div class="btn-row">
+        <button id="createUserBtn">Register User</button>
+        <button id="backBtnUser">Back</button>
+      </div>
+    </div>
+
+    <!-- Institution Form -->
+    <div id="institutionForm" class="fade">
+      <input type="text" id="institutionName" placeholder="Institution Name" />
+      <input type="text" id="institutionApi" placeholder="API Token" />
+      <input type="password" id="institutionPassword" placeholder="Password" />
+      <div class="btn-row">
+        <button id="createInstitutionBtn">Register Institution</button>
+        <button id="backBtnInst">Back</button>
+      </div>
+    </div>
   </div>
 
   <h2>Accounts</h2>

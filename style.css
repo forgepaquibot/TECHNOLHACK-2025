@@ -1,0 +1,114 @@
+/* ===== Global ===== */
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: "Segoe UI", Roboto, sans-serif;
+  background: #121212;
+  color: #eee;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  padding: 2rem;
+}
+h1, h2, h3 { color: #fff; font-weight: 500; text-align: center; }
+
+/* ===== Cards / Layout ===== */
+.card {
+  background: #1e1e1e;
+  border-radius: 12px;
+  padding: 2rem;
+  margin: 1rem auto;
+  box-shadow: 0 4px 20px rgba(0,0,0,.4);
+  width: 100%;
+  max-width: 560px;
+  text-align: center;
+  transition: all .3s ease;
+}
+.container {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-top: 2rem;
+  width: 100%;
+  max-width: 1200px;
+}
+.column {
+  flex: 1;
+  background: #1a1a1a;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 2px 10px rgba(0,0,0,.3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;      /* center inner content */
+}
+#usersList, #institutionsList {
+  width: 100%;
+  max-width: 560px;         /* keep lists centered/narrow */
+}
+
+.user-card, .institution-card {
+  background: #2a2a2a;
+  border-radius: 10px;
+  padding: 1rem;
+  margin: 1rem auto;
+  width: 100%;
+  text-align: left;
+}
+
+.profile, .edit {
+  margin-top: 1rem;
+  padding-top: .5rem;
+  border-top: 1px dashed #555;
+}
+
+/* ===== Inputs / Buttons ===== */
+input, select {
+  background: #2b2b2b;
+  border: 1px solid #444;
+  border-radius: 6px;
+  padding: .65rem .75rem;
+  margin: .35rem 0;
+  width: 100%;
+  color: #eee;
+}
+input:focus, select:focus { outline: none; border-color: #777; }
+
+.btn-row { display: flex; gap: .75rem; justify-content: center; flex-wrap: wrap; }
+button {
+  background: #3a3a3a;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: .75rem 1.25rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all .2s ease;
+}
+button:hover { background: #575757; }
+
+/* ===== Causes box ===== */
+.causes-dropdown {
+  border: 1px solid #444;
+  background: #1a1a1a;
+  border-radius: 8px;
+  padding: .5rem .75rem;
+  max-height: 150px;
+  overflow-y: auto;
+}
+.causes-dropdown label { display: block; padding: .2rem 0; }
+
+/* ===== Fade animations ===== */
+.fade {
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity .35s ease, transform .35s ease;
+  pointer-events: none;
+}
+.fade.show {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.hidden { display: none; }
