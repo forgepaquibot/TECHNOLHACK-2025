@@ -3,5 +3,12 @@ class User {
         this.name = name;
         this.password = password;
         this.id = id;
-    }  
+
+    }
+    
+    interact() {
+
+    }
 }
+
+users.interact();
