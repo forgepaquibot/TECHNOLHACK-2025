@@ -10,3 +10,9 @@ class User {
 
     }
 }
+
+class Chat {
+    constructor(log) {
+        this.log = log; // Array of strings, each index is a line
+    }
+}
