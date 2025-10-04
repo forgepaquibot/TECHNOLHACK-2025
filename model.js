@@ -117,3 +117,54 @@ export class User {
     }
   }
 }
+
+// =====================
+// Industry Class
+// =====================
+
+// =====================
+// Institution Class
+// =====================
+
+export class Institution {
+  /**
+   * Represents an institution (special account).
+   * Institutions are separate from users and require an API Token to create.
+   *
+   * Fields:
+   * - name: Institution name (string)
+   * - apiToken: must equal "ABC123" (simulated authentication)
+   * - password: institution account password (string)
+   * - id: auto-generated unique ID (hash of name)
+   * - associatedUsers: list of user IDs linked to this institution
+   */
+  constructor(name, apiToken, password) {
+    if (apiToken !== "ABC123") {
+      throw new Error("Invalid API Token. Must be 'ABC123'.");
+    }
+
+    this.name = name;
+    this.apiToken = apiToken;
+    this.password = password;
+    this.id = Institution.generateId(name);
+
+    this.associatedUsers = [];
+  }
+
+  // --- Utility: simple hash for ID ---
+  static generateId(instName) {
+    let hash = 0;
+    for (let i = 0; i < instName.length; i++) {
+      hash = (hash << 5) - hash + instName.charCodeAt(i);
+      hash |= 0;
+    }
+    return Math.abs(hash);
+  }
+
+  // --- Associate a user with this institution ---
+  addUser(user) {
+    if (!this.associatedUsers.includes(user.id)) {
+      this.associatedUsers.push(user.id);
+    }
+  }
+}

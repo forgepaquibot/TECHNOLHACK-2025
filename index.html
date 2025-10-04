@@ -2,21 +2,49 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>User List</title>
+  <title>User & Institution Management</title>
   <style>
-    .user-card { border: 1px solid #ccc; padding: 10px; margin: 10px 0; }
+    .hidden { display: none; }
+    .container { display: flex; gap: 20px; margin-top: 20px; }
+    .column { flex: 1; border: 1px solid #aaa; padding: 10px; }
+    .user-card, .institution-card { border: 1px solid #ccc; padding: 10px; margin: 10px 0; }
     .profile, .edit { display: none; margin-top: 10px; border-top: 1px dashed #aaa; padding-top: 8px; }
     .causes-dropdown { border: 1px solid #aaa; padding: 5px; max-height: 150px; overflow-y: auto; }
   </style>
 </head>
 <body>
-  <h2>Create User</h2>
-  <input type="text" id="username" placeholder="Username">
-  <input type="password" id="password" placeholder="Password">
-  <button id="createBtn">Create User</button>
+  <h2>Create Account</h2>
+  <button id="showUserForm">Create User Account</button>
+  <button id="showInstitutionForm">Create Institution Account</button>
 
-  <h2>Users</h2>
-  <div id="usersList"></div>
+  <!-- User Form -->
+  <div id="userForm" class="hidden">
+    <h3>Create User</h3>
+    <input type="text" id="username" placeholder="Username">
+    <input type="password" id="password" placeholder="Password">
+    <button id="createUserBtn">Create User</button>
+  </div>
+
+  <!-- Institution Form -->
+  <div id="institutionForm" class="hidden">
+    <h3>Create Institution</h3>
+    <input type="text" id="institutionName" placeholder="Institution Name">
+    <input type="text" id="institutionApi" placeholder="API Token">
+    <input type="password" id="institutionPassword" placeholder="Password">
+    <button id="createInstitutionBtn">Create Institution</button>
+  </div>
+
+  <h2>Accounts</h2>
+  <div class="container">
+    <div class="column">
+      <h3>Users</h3>
+      <div id="usersList"></div>
+    </div>
+    <div class="column">
+      <h3>Institutions</h3>
+      <div id="institutionsList"></div>
+    </div>
+  </div>
 
   <script type="module" src="app.js"></script>
 </body>
