@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>User List</title>
+  <style>
+    .user-card { border: 1px solid #ccc; padding: 10px; margin: 10px 0; }
+    .profile, .edit { display: none; margin-top: 10px; border-top: 1px dashed #aaa; padding-top: 8px; }
+  </style>
+</head>
+<body>
+  <h2>Create User</h2>
+  <input type="text" id="username" placeholder="Username">
+  <input type="password" id="password" placeholder="Password">
+  <button id="createBtn">Create User</button>
+
+  <h2>Users</h2>
+  <div id="usersList"></div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
