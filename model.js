@@ -32,10 +32,11 @@ class User {
      * @param {string} name
      * @param {string} password
      * @param {int} id
+     * @param {int} totalInteractions
      * @param {object} interactions is the point system
      * @param {object} options
      */
-    constructor(name, password, id, interactions = {}, options = {}) {
+    constructor(name, password, id, totalInteractions, interactions = {}, options = {}) {
         this.name = name;
         this.password = password;
         this.id = id; // set via generateID()
@@ -59,10 +60,17 @@ class User {
         this.causes = causes.length ? causes : ["No causes selected"];
         this.institution = institution;
 
+        this.totalInteractions = totalInteractions;
         this.interactions = interactions; // store interactions object (keys are strings)
         this.generateID();
     }
 
+    calculateTotalInteractions() {
+        this.totalInteractions = 0;
+        for (let key in this.interactions) {
+            this.totalInteractions += this.interactions[key];
+        }
+    }
 
     /** Deterministic 32-bit hash of username → numeric ID */
     generateID() {
