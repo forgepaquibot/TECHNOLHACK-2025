@@ -2,44 +2,72 @@ const MAX_USERS = 30;
 const MAX_INSTITUTIONS = 0;
 const MAX_USERS_LEADERBOARD = 15;
 const ERR_DUPLICATE_USER = -3;
+const DAILY_INTERACTION_AMOUNT = 2;
 
 let users = [];
 let leaderboard = [];
 let institutions = [];
-let chat = {"Unique chat id": User} // Chat dictionary with id key and chat object value
+let mainUser;
 let panel;
 
 // Example cities
-institutions.push(new Institution("Toronto", "ABC123", "asfasfafs", {coords: [-79.3832, 43.6532]}));
-institutions.push(new Institution("London", "ABC123", "afasffa", {coords: [-0.1276, 51.5074]}));
-institutions.push(new Institution("Tokyo", "ABC123", "dfsdf", {coords: [139.6917, 35.6895]}));
+institutions.push(new Institution("University of Toronto", "ABC123", "asfasfafs", ["Essay challenge", "ACORN quiz"], {coords: [-79.3832, 43.6532]}));
+institutions.push(new Institution("University of Oxford", "ABC123", "afasffa", ["Math exam"], {coords: [-0.1276, 51.5074]}));
+institutions.push(new Institution("Tokyo Imperial Palace", "ABC123", "dfsdf", ["Public administration", "Decipher script"], {coords: [139.6917, 35.6895]}));
+institutions.push(new Institution("Google HQ", "ABC123", "afasffa", ["Leetcode", "AI solutions", "Cloud computing"], {coords: [-122.0841, 37.4220]}));
+institutions.push(new Institution("Sydney Opera House", "ABC123", "afasffa", ["Ticket sales pitch", "Virtual opera competition"], {coords: [151.2153, -33.8568]}));
+institutions.push(new Institution("ALMA Observatory", "ABC123", "afasffa", ["Constellation tracking", "Comet path calculation"], {coords: [-67.753, -23.029]}));
+institutions.push(new Institution("Etosha Wildlife Conservatory", "ABC123", "afasffa", ["Advertise postings"], {coords: [16.445, -18.775]}));
+institutions.push(new Institution("Juan Carlos I Research Base", "ABC123", "afasffa", ["Seismic data interpretation", "Temperature calculation", "Glacier life cycle"], {coords: [-60.3667, -62.6667]}));
+institutions.push(new Institution("Carleton University", "ABC123", "afasffa", ["RAVE", "Research assistance"], {coords: [-75.6960, 45.3876]}));
+
 
 function createUser() {
-    let usernameInput = document.getElementById("usernameInput");
-    let passwordInput = document.getElementById("passwordInput");
-    let genderInput = document.getElementById("usernameInput");
-    let pronounsInput = document.getElementById("passwordInput");
-    let fieldofstudyInput = document.getElementById("usernameInput");
-    let interestsInput = document.getElementById("passwordInput");
-    let linkedinInput = document.getElementById("usernameInput");
-    let causesInput = document.getElementById("passwordInput");
-    let institutionInput = document.getElementById("passwordInput");
-    let newUser;
+    let usernameInput = document.getElementById("name");
+    let passwordInput = document.getElementById("password");
+    let genderInput = document.getElementById("gender");
+    let pronounsInput = document.getElementById("pronouns");
+    let fieldofstudyInput = document.getElementById("fieldOfStudy");
+    let interestsInput = document.getElementById("interests");
+    let linkedinInput = document.getElementById("linkedin");
+    let causesInput = document.getElementById("causes");
 
     // Validate user
-    for (user in users) {
-        if (user.name.equals(usernameInput.value)) {
+    for (let u of users) {
+        if (u.name === usernameInput.value) {
             throwError(ERR_DUPLICATE_USER);
             return;
         }
     }
 
-    newUser = new User(usernameInput.value, passwordInput.value, 0);
-    newUser.generateID(); // Generate unique id
+    // Choose causes (just first one checked here)
+    let cause = null;
+    let checkboxes = causesInput.querySelectorAll("input[type=checkbox]:checked");
+    if (checkboxes.length > 0) {
+        cause = checkboxes[0].value;
+    }
 
+    let newUser = new User(
+        usernameInput.value,
+        passwordInput.value,
+        0,
+        0,
+        {},
+        "Tech Enthusiasts",
+        {
+            gender: genderInput.value,
+            pronouns: pronounsInput.value,
+            fieldOfStudy: fieldofstudyInput.value,
+            interests: interestsInput.value,
+            linkedin: linkedinInput.value,
+            causes: cause
+        }
+    );
+
+    newUser.generateID(); // Generate unique id
+    mainUser = newUser;
     users.push(newUser); // Add user to the global array
 }
-
 
 function throwError(errorCode) {
     switch (errorCode) {
@@ -49,6 +77,7 @@ function throwError(errorCode) {
 
 }
 
+/*
 function loadData() {
 
 }
@@ -56,6 +85,7 @@ function loadData() {
 function saveData() {
 
 }
+*/
 
 function drawMap() {
     d3.json("https://unpkg.com/world-atlas@2/countries-110m.json").then(data => {
@@ -203,7 +233,10 @@ function placeInstitutions(tile, projection) {
             this.instData = d;
         })
         .on("click", function(event) {
+            //interactInstitution(event);
+
             const inst = this.instData; // access the Institution object
+            let points = 0;
 
             if (panel && inst != panel.instData) { 
                 panel.remove(); 
@@ -219,17 +252,61 @@ function placeInstitutions(tile, projection) {
             panel.classList.add("inst-panel");
             panel.instData = inst;
 
-            // Create the title
+            // --- Close Button ---
+            const closeBtn = document.createElement("button");
+            closeBtn.textContent = "X";
+            closeBtn.classList.add("panel-close-btn");
+            closeBtn.style.position = "absolute";
+            closeBtn.style.top = "18px";
+            closeBtn.style.right = "10px";
+            closeBtn.style.width = "30px";
+            closeBtn.style.height = "30px";
+            closeBtn.style.background = "#e74c3c"; // red background
+            closeBtn.style.color = "white";
+            closeBtn.style.border = "none";
+            closeBtn.style.borderRadius = "50%";
+            closeBtn.style.fontSize = "18px";
+            closeBtn.style.cursor = "pointer";
+            closeBtn.style.display = "flex";
+            closeBtn.style.alignItems = "center";
+            closeBtn.style.justifyContent = "center";
+            closeBtn.addEventListener("click", () => {
+                panel.remove();
+                panel = null;
+            });
+
+            panel.appendChild(closeBtn);
+
+            // --- Points Section ---
+            const pointsDiv = document.createElement("div");
+            pointsDiv.classList.add("points-section");
+            pointsDiv.textContent = `Interaction Points: ${ mainUser.interactions[inst.apiToken] || 0}`;
+            panel.appendChild(pointsDiv);
+
+            // --- Title ---
             const title = document.createElement("h2");
-            title.textContent = inst.name;
+            const socialElement = document.createElement("a"); // Social media plug
+            socialElement.textContent = inst.name;
+            socialElement.href = inst.social;
+            title.appendChild(socialElement);
             panel.appendChild(title);
 
-            // Create the leaderboard subtitle
-            const subtitle = document.createElement("h3");
-            subtitle.textContent = "Leaderboard";
-            panel.appendChild(subtitle);
+            // --- Content Container (Leaderboard + Tasks) ---
+            const contentContainer = document.createElement("div");
+            contentContainer.classList.add("panel-content");
+            contentContainer.style.display = "flex";
+            contentContainer.style.gap = "20px"; // space between leaderboard and tasks
+            contentContainer.style.marginTop = "5px"; // smaller gap
 
-            // Create the list for leaderboard
+            // --- Leaderboard Section ---
+            const leaderboardDiv = document.createElement("div");
+            leaderboardDiv.classList.add("leaderboard-section");
+            leaderboardDiv.style.flex = "1";
+
+            const leaderboardTitle = document.createElement("h3");
+            leaderboardTitle.textContent = "Leaderboard";
+            leaderboardDiv.appendChild(leaderboardTitle);
+
             const list = document.createElement("ul");
             if (inst.leaderboard && inst.leaderboard.length > 0) {
                 inst.leaderboard.forEach(userId => {
@@ -242,24 +319,53 @@ function placeInstitutions(tile, projection) {
                 li.textContent = "No data";
                 list.appendChild(li);
             }
-            panel.appendChild(list);
+            leaderboardDiv.appendChild(list);
+
+            // --- Tasks Section ---
+            const tasksDiv = document.createElement("div");
+            tasksDiv.classList.add("tasks-section");
+            tasksDiv.style.flex = "1";
+
+            const tasksTitle = document.createElement("h3");
+            tasksTitle.textContent = "Tasks";
+            tasksDiv.appendChild(tasksTitle);
+
+            const tasksList = document.createElement("ul");
+            if (inst.tasks && inst.tasks.length > 0) {
+                inst.tasks.forEach(task => {
+                    const li = document.createElement("li");
+                    const taskLink = document.createElement("a");
+                    taskLink.textContent = task;
+                    taskLink.href = "#";
+                    li.appendChild(taskLink);
+                    tasksList.appendChild(li);
+                });
+            } else {
+                const li = document.createElement("li");
+                li.textContent = "No tasks available";
+                tasksList.appendChild(li);
+            }
+
+            tasksDiv.appendChild(tasksList);
+
+            // --- Append sections to content container ---
+            contentContainer.appendChild(leaderboardDiv);
+            contentContainer.appendChild(tasksDiv);
+            panel.appendChild(contentContainer);
 
             // Append panel to container in HTML
             document.getElementById("panels-container").appendChild(panel);
 
-            // Get mouse position relative to page
-            const [x, y] = d3.pointer(event);
-
-            // Position panel near icon
-            panel.style.left = (x + 10) + "px";
-            panel.style.top = (y + 10) + "px";
+            // --- Center the panel on screen ---
+            panel.style.position = "fixed";
+            panel.style.left = `calc(50% - ${panel.offsetWidth / 2}px)`;
+            panel.style.top = `calc(50% - ${panel.offsetHeight / 2}px)`;
 
             // Show panel
             panel.classList.add("active");
 
             makePanelDraggable(panel);
         });
-
 
     const labels = tile.selectAll("text")
         .data(institutions)
@@ -320,4 +426,68 @@ function makePanelDraggable(panel) {
         isDragging = false;
         panel.style.transition = "opacity 0.25s ease, transform 0.25s ease";
     });
+}
+
+function interactInstitution(e) {
+    const institution = e.instData;
+    if (mainUser.interactions.includes(institution.apiToken)) {
+        mainUser.interactions[institution.apiToken] += DAILY_INTERACTION_AMOUNT;
+    } else {
+        mainUser.interactions[institution.apiToken] = DAILY_INTERACTION_AMOUNT;
+    }
+
+    updateUserInfo();
+    spawnPoint(e.clientX, e.clientY);
+}
+
+function updateUserInfo() {
+    console.log(mainUser);
+    mainUser.calculateTotalInteractions();
+
+    // Update user info
+    document.getElementById("user-name").textContent = mainUser.name;
+    document.getElementById("user-group").textContent = "Group: " + mainUser.group;
+    document.getElementById("user-points").textContent = "Interactions: " + mainUser.totalInteractions;
+}
+
+function spawnPoint(x, y, imgSrc = "interactionPoint.png") {
+    const img = document.createElement("img");
+    img.src = imgSrc;
+    img.style.position = "absolute";
+    img.style.width = "750px";
+    img.style.height = "500px";
+    img.style.pointerEvents = "none";
+    document.body.appendChild(img);
+
+    let start = null;
+    const duration = 1500; // 1.5s
+
+    function animate(timestamp) {
+        if (!start) start = timestamp;
+        const progress = (timestamp - start) / duration;
+
+        // easing
+        const ease = Math.min(progress, 1);
+
+        // upward movement
+        const yOffset = -150 * ease; 
+
+        // sideways swerve (sin wave)
+        const xOffset = Math.sin(progress * Math.PI * 2) * 20 * (1 - ease);
+
+        // opacity
+        const opacity = 1 - ease;
+
+        img.style.left = x + xOffset + "px";
+        img.style.top = y + yOffset + "px";
+        img.style.opacity = opacity;
+
+        if (progress < 1) {
+        requestAnimationFrame(animate);
+        } else {
+        img.remove();
+        }
+    }
+
+    requestAnimationFrame(animate);
 }

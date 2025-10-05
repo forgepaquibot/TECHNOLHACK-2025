@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Midas</title>
+<style>
+  /* --- Reset --- */
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Montserrat', sans-serif;
+  }
+
+  body {
+    background: linear-gradient(135deg, #0f172a, #1e3a8a);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    color: #f8fafc;
+  }
+
+  /* --- Card --- */
+  .signup-card {
+    background: #1e293b;
+    padding: 40px 35px;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    width: 100%;
+    max-width: 500px;
+  }
+
+  .signup-card h1 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #38bdf8;
+  }
+
+  /* --- Form fields --- */
+  .signup-card input[type="text"],
+  .signup-card input[type="password"],
+  .signup-card select,
+  .signup-card textarea {
+    width: 100%;
+    padding: 12px 15px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    border: 1px solid #94a3b8;
+    background: #0f172a;
+    color: #f8fafc;
+    font-size: 15px;
+    transition: all 0.2s ease;
+  }
+
+  .signup-card input:focus,
+  .signup-card select:focus,
+  .signup-card textarea:focus {
+    outline: none;
+    border-color: #38bdf8;
+    box-shadow: 0 0 5px #38bdf8;
+  }
+
+  /* --- Multi-select causes --- */
+  .signup-card .causes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 15px;
+  }
+
+  .signup-card .causes label {
+    background: #334155;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+  }
+
+  .signup-card .causes input[type="checkbox"] {
+    display: none;
+  }
+
+  .signup-card .causes input[type="checkbox"]:checked + label {
+    background: #38bdf8;
+    color: #0f172a;
+    font-weight: bold;
+  }
+
+  /* --- Button --- */
+  .signup-card button {
+    width: 100%;
+    padding: 12px;
+    background: #38bdf8;
+    color: #0f172a;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  }
+
+  .signup-card button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+  }
+
+  /* --- Labels --- */
+  label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: #38bdf8;
+  }
+
+  /* --- Textarea / Interests --- */
+  textarea {
+    resize: vertical;
+    min-height: 60px;
+    max-height: 120px;
+  }
+
+  @media (max-width: 550px) {
+    .signup-card {
+      padding: 25px 20px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="signup-card">
+  <h1>User Signup</h1>
+
+  <form id="signupForm">
+    <label for="name">Name</label>
+    <input type="text" id="name" placeholder="Your Name" required>
+
+    <label for="password">Password</label>
+    <input type="password" id="password" placeholder="Password" required>
+
+    <label for="gender">Gender</label>
+    <select id="gender">
+      <option value="" disabled selected>Select Gender</option>
+      <option>Male</option>
+      <option>Female</option>
+      <option>Non-binary</option>
+      <option>Other</option>
+      <option>Prefer not to say</option>
+    </select>
+
+    <label for="pronouns">Pronouns</label>
+    <input type="text" id="pronouns" placeholder="e.g. He/Him, She/Her, They/Them">
+
+    <label for="fieldOfStudy">Field of Study</label>
+    <input type="text" id="fieldOfStudy" placeholder="Your Field of Study">
+
+    <label for="interests">Interests</label>
+    <textarea id="interests" placeholder="List your interests separated by commas"></textarea>
+
+    <label for="linkedin">LinkedIn / Social Profiles</label>
+    <input type="text" id="linkedin" placeholder="Paste URL(s)">
+
+    <label>Causes</label>
+    <div class="causes" id="causes">
+      <input type="checkbox" id="globalWarming" value="Global Warming">
+      <label for="globalWarming">Global Warming</label>
+
+      <input type="checkbox" id="worldHunger" value="World Hunger">
+      <label for="worldHunger">World Hunger</label>
+
+      <input type="checkbox" id="potableWater" value="Potable Water">
+      <label for="potableWater">Potable Water</label>
+
+      <input type="checkbox" id="loitering" value="Loitering / Littering">
+      <label for="loitering">Loitering / Littering</label>
+    </div>
+
+    <button type="submit">Sign Up</button>
+  </form>
+</div>
+<script src="model.js"></script>
+<script src="controller.js"></script>
+<script>
+  // Example form submission
+  document.getElementById('signupForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    createUser();
+    window.location.href = "view.html";
+  });
+</script>
+
+</body>
+</html>

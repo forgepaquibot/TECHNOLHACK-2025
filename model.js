@@ -36,7 +36,7 @@ class User {
      * @param {object} interactions is the point system
      * @param {object} options
      */
-    constructor(name, password, id, totalInteractions, interactions = {}, options = {}) {
+    constructor(name, password, id, totalInteractions, interactions = {}, group = "", options = {}) {
         this.name = name;
         this.password = password;
         this.id = id; // set via generateID()
@@ -62,6 +62,7 @@ class User {
 
         this.totalInteractions = totalInteractions;
         this.interactions = interactions; // store interactions object (keys are strings)
+        this.group = group;
         this.generateID();
     }
 
@@ -136,23 +137,27 @@ class Institution {
      * @param {string} name
      * @param {string} apiToken
      * @param {string} password
+     * @param {Array} tasks
      * @param {object} options is the institution info
      */
-    constructor(name, apiToken, password, {
+    constructor(name, apiToken, password, tasks, {
         founded = "No year",
         location = "No location",
+        social = "",
         employees = 0,
         areaOfInterests = ["None"],
         coords = [0, 0],
-        leaderboard = null
+        leaderboard = []
     } = options) {
         if (apiToken !== "ABC123") throw new Error("Invalid API Token. Must be 'ABC123'.");
         this.name = name;
         this.apiToken = apiToken;
         this.password = password;
+        this.tasks = tasks;
         this.coords = coords;
         this.founded = founded;
         this.location = location;
+        this.social = social;
         this.employees = employees;
         this.areaOfInterests = areaOfInterests;
         this.leaderboard = leaderboard;
