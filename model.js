@@ -3,7 +3,18 @@ class User {
         this.name = name;
         this.password = password;
         this.id = id;
-    }  
+
+    }
+
+    generateID() {
+
+    }
+}
+
+class Chat {
+    constructor(log) {
+        this.log = log; // Array of strings, each index is a line
+    }
 }
 // Leaderboard class tracking users and their connection
 class Leaderboard {
