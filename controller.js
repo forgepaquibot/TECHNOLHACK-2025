@@ -1,7 +1,14 @@
 const MAX_USERS = 30;
 const MAX_INSTITUTIONS = 20;
 const MAX_USERS_LEADERBOARD = 15;
-const ERR_DUPLICATE_USER = -3
+const ERR_DUPLICATE_USER = -3;
+
+// Example city reference points
+const cities = [
+    { name: "Toronto", coords: [-79.3832, 43.6532] },
+    { name: "London", coords: [-0.1276, 51.5074] },
+    { name: "Tokyo", coords: [139.6917, 35.6895] }
+];
 
 let users = [MAX_USERS];
 let leaderboard = [MAX_USERS_LEADERBOARD];
@@ -66,59 +73,47 @@ function drawMap() {
             .attr("d", path)
             .attr("fill", "lightgreen")
             .attr("stroke", "black");
-
-        // Example city reference points
-        const cities = [
-            { name: "Toronto", coords: [-79.3832, 43.6532] },
-            { name: "London", coords: [-0.1276, 51.5074] },
-            { name: "Tokyo", coords: [139.6917, 35.6895] }
-        ];
-
-        // City group (not scaled with map)
-        const cityGroup = svg.append("g");
-
-        const circles = cityGroup.selectAll("circle")
-            .data(cities)
-            .enter()
-            .append("circle")
-            .attr("cx", d => projection(d.coords)[0])
-            .attr("cy", d => projection(d.coords)[1])
-            .attr("r", 5)
-            .attr("fill", "red");
-
-        const labels = cityGroup.selectAll("text")
-            .data(cities)
-            .enter()
-            .append("text")
-            .attr("x", d => projection(d.coords)[0] + 7)
-            .attr("y", d => projection(d.coords)[1] + 3)
-            .text(d => d.name)
-            .style("font-size", "12px")
-            .style("fill", "black");
-
-        // Add zoom/pan
-        const zoom = d3.zoom()
-            .scaleExtent([1, 50])
-            .on("zoom", (event) => {
-                g.attr("transform", event.transform); // scale map normally
-
-                // Keep cities and labels consistent in size
-        circles
-            .attr("transform", event.transform)
-            .attr("r", Math.min(5, 10 / event.transform.k)); // shrink when zooming in, never exceed 10
-
-        labels
-            .attr("transform", event.transform)
-            .style("font-size", `${Math.min(5, 10 / event.transform.k)}px`); // shrink when zooming in, never exceed 20px
-            });
-
-        svg.call(zoom);
     });
 }
 
+function placeInstitutions(cities) {
+    // City group (not scaled with map)
+    const cityGroup = svg.append("g");
 
+    const circles = cityGroup.selectAll("circle")
+        .data(cities)
+        .enter()
+        .append("circle")
+        .attr("cx", d => projection(d.coords)[0])
+        .attr("cy", d => projection(d.coords)[1])
+        .attr("r", 5)
+        .attr("fill", "red");
 
+    const labels = cityGroup.selectAll("text")
+        .data(cities)
+        .enter()
+        .append("text")
+        .attr("x", d => projection(d.coords)[0] + 7)
+        .attr("y", d => projection(d.coords)[1] + 3)
+        .text(d => d.name)
+        .style("font-size", "12px")
+        .style("fill", "black");
 
-function placeInstitutions() {
-    
+    // Add zoom/pan
+    const zoom = d3.zoom()
+        .scaleExtent([1, 50])
+        .on("zoom", (event) => {
+            g.attr("transform", event.transform); // scale map normally
+
+            // Keep cities and labels consistent in size
+    circles
+        .attr("transform", event.transform)
+        .attr("r", Math.min(5, 10 / event.transform.k)); // shrink when zooming in, never exceed 10
+
+    labels
+        .attr("transform", event.transform)
+        .style("font-size", `${Math.min(5, 10 / event.transform.k)}px`); // shrink when zooming in, never exceed 20px
+        });
+
+    svg.call(zoom);
 }
