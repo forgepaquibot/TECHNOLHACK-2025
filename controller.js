@@ -233,8 +233,6 @@ function placeInstitutions(tile, projection) {
             this.instData = d;
         })
         .on("click", function(event) {
-            //interactInstitution(event);
-
             const inst = this.instData; // access the Institution object
             let points = 0;
 
@@ -280,7 +278,7 @@ function placeInstitutions(tile, projection) {
             // --- Points Section ---
             const pointsDiv = document.createElement("div");
             pointsDiv.classList.add("points-section");
-            pointsDiv.textContent = `Interaction Points: ${ mainUser.interactions[inst.apiToken] || 0}`;
+            pointsDiv.textContent = `Interaction Points: ${ 1 || 0}`;
             panel.appendChild(pointsDiv);
 
             // --- Title ---
@@ -365,6 +363,7 @@ function placeInstitutions(tile, projection) {
             panel.classList.add("active");
 
             makePanelDraggable(panel);
+            spawnPoint(event.clientX, event.clientY);
         });
 
     const labels = tile.selectAll("text")
