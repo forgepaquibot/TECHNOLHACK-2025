@@ -5,7 +5,7 @@ class User {
         this.id = id;
     }  
 }
-// Leaderboard class tracking users and their connections
+// Leaderboard class tracking users and their connection
 class Leaderboard {
   constructor() {
     // Create a Map to store users and their total connections.
