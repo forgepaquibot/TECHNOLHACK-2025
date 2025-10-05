@@ -60,8 +60,10 @@ function saveData() {
 function drawMap() {
     d3.json("https://unpkg.com/world-atlas@2/countries-110m.json").then(data => {
         const countries = topojson.feature(data, data.objects.countries);
-        const width = window.innerWidth;
-        const height = window.innerHeight;
+
+        // Initial dimensions
+        let width = window.innerWidth;
+        let height = window.innerHeight;
 
         const projection = d3.geoMercator()
             .scale(130)
@@ -120,37 +122,67 @@ function drawMap() {
                     let offsetX = parseInt(tile.attr("data-offset-x"));
                     let offsetY = parseInt(tile.attr("data-offset-y"));
 
-                    const posX = offsetX * width * k + x;
-                    const posY = offsetY * height * k + y;
+                    const svgRect = svg.node().getBoundingClientRect();
+                    const tileWidth = svgRect.width;
+                    const tileHeight = svgRect.height;
+
+                    const posX = offsetX * tileWidth * k + x;
+                    const posY = offsetY * tileHeight * k + y;
 
                     let newOffsetX = offsetX;
                     let newOffsetY = offsetY;
 
-                    if (posX + width * k < 0) newOffsetX += 3;
-                    if (posX > width * k * 2) newOffsetX -= 3;
-                    if (posY + height * k < 0) newOffsetY += 3;
-                    if (posY > height * k * 2) newOffsetY -= 3;
+                    if (posX + tileWidth * k < 0) newOffsetX += 3;
+                    if (posX > tileWidth * k * 2) newOffsetX -= 3;
+                    if (posY + tileHeight * k < 0) newOffsetY += 3;
+                    if (posY > tileHeight * k * 2) newOffsetY -= 3;
 
                     if (newOffsetX !== offsetX || newOffsetY !== offsetY) {
                         tile.attr("data-offset-x", newOffsetX)
                             .attr("data-offset-y", newOffsetY)
-                            .attr("transform", `translate(${newOffsetX * width}, ${newOffsetY * height})`);
+                            .attr("transform", `translate(${newOffsetX * tileWidth}, ${newOffsetY * tileHeight})`);
                     }
                 });
 
+                // Scale icons and labels inversely to zoom
                 d3.selectAll(allIcons)
                     .attr("width", d => Math.max(5, 20 / k))
                     .attr("height", d => Math.max(5, 20 / k))
-                    .attr("x", d => projection(d.coords)[0] - (Math.max(8, 20 / k) / 2)) // half of current width
-                    .attr("y", d => projection(d.coords)[1] - (Math.max(8, 20 / k) / 2)); // half of current height
+                    .attr("x", d => projection(d.coords)[0] - (Math.max(8, 20 / k) / 2))
+                    .attr("y", d => projection(d.coords)[1] - (Math.max(8, 20 / k) / 2));
 
                 d3.selectAll(allLabels)
                     .style("font-size", `${Math.max(6, 12 / k)}px`)
-                    .attr("x", d => projection(d.coords)[0] + (Math.max(7, 7 / k))) 
+                    .attr("x", d => projection(d.coords)[0] + (Math.max(7, 7 / k)))
                     .attr("y", d => projection(d.coords)[1] + (Math.max(3, 3 / k)));
             });
 
         svg.call(zoom);
+
+        // --- Start centered on the middle of the middle tile (the world map center) ---
+        const tileCenterX = width / 2;
+        const tileCenterY = height / 2;
+        const initialZoom = 2; // zoomed in
+
+        const initialTransform = d3.zoomIdentity
+            .translate(width / 2, height / 2) // move origin to viewport center
+            .scale(initialZoom)
+            .translate(-tileCenterX, -tileCenterY); // shift to tile center
+
+        svg.call(zoom.transform, initialTransform);
+
+
+        // --- Handle window resize ---
+        window.addEventListener("resize", () => {
+            width = window.innerWidth;
+            height = window.innerHeight;
+
+            svg.attr("width", width).attr("height", height);
+            projection.translate([width / 2, height / 1.5]);
+
+            // Update all country paths
+            mapGroup.selectAll("path").attr("d", d3.geoPath().projection(projection));
+        });
     });
 }
 
